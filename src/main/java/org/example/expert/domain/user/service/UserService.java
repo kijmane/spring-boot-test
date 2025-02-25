@@ -1,5 +1,6 @@
 package org.example.expert.domain.user.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.config.PasswordEncoder;
 import org.example.expert.domain.common.exception.InvalidRequestException;
@@ -24,24 +25,20 @@ public class UserService {
     }
 
     @Transactional
-    public void changePassword(long userId, UserChangePasswordRequest userChangePasswordRequest) {
-        if (userChangePasswordRequest.getNewPassword().length() < 8 ||
-                !userChangePasswordRequest.getNewPassword().matches(".*\\d.*") ||
-                !userChangePasswordRequest.getNewPassword().matches(".*[A-Z].*")) {
-            throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
-        }
+    public void changePassword(long userId, @Valid UserChangePasswordRequest userChangePasswordRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new InvalidRequestException("User not found"));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new InvalidRequestException("User not found"));
-
-        if (passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())) {
-            throw new InvalidRequestException("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.");
-        }
-
-        if (!passwordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
+        // 기존 비밀번호와 일치하는지 확인
+        if(!passwordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new InvalidRequestException("잘못된 비밀번호입니다.");
         }
 
+        // 새 비밀번호가 기존 비밀번호와 동일한지 확인
+        if(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())) {
+            throw new InvalidRequestException("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.");
+        }
+
+        // 새로운 비밀번호를 암호화하여 저장
         user.changePassword(passwordEncoder.encode(userChangePasswordRequest.getNewPassword()));
     }
 }
