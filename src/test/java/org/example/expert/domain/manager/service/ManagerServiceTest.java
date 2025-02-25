@@ -50,7 +50,7 @@ class ManagerServiceTest {
     }
 
     @Test
-    void todo의_user가_null인_경우_예외가_발생한다() {
+    void todo의_user가_null인_경우_InvalidRequestException_예외가_발생한다() { // 메서드 명 변경
         // given
         AuthUser authUser = new AuthUser(1L, "a@a.com", UserRole.USER);
         long todoId = 1L;
