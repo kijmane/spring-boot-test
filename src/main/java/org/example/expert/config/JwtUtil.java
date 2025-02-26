@@ -30,7 +30,11 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        String envSecretKey = System.getenv("JWT_SECRET_KEY");
+        if (envSecretKey == null || envSecretKey.isEmpty()) {
+            throw new IllegalStateException("환경 변수 'JWT_SECRET_KEY'가 설정되지 않았습니다.");
+        }
+        byte[] bytes = Base64.getDecoder().decode(envSecretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
 
