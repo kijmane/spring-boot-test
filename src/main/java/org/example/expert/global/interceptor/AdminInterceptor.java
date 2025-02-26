@@ -25,11 +25,13 @@ public class AdminInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Long userId = userService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 조회
         if (userId == null) {
+            log.warn("[AUTH FAIL] Unauthorized access attempt to {} at {}", request.getRequestURI(), LocalDateTime.now());
             throw new UnauthorizedAccessException("사용자 인증 실패");
         }
 
         UserRole userRole = userService.getUserRoleById(userId); // 사용자 역할 조회
         if (userRole != UserRole.ADMIN) {
+            log.warn("[AUTH FAIL] UserID: {} attempted unauthorized access to {} at {}", userId, request.getRequestURI(), LocalDateTime.now());
             throw new UnauthorizedAccessException("어드민 권한이 필요합니다.");
         }
 
