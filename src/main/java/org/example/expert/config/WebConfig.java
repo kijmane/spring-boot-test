@@ -1,8 +1,10 @@
 package org.example.expert.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.expert.global.interceptor.AdminInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -11,6 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    private final AdminInterceptor adminInterceptor; // Interceptor 추가
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/admin/**"); // 어드민 API에만 적용
+    }
     // ArgumentResolver 등록
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

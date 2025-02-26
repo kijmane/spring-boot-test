@@ -7,7 +7,9 @@ import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.user.dto.request.UserChangePasswordRequest;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
+import org.example.expert.domain.user.enums.UserRole;
 import org.example.expert.domain.user.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +42,22 @@ public class UserService {
 
         // 새로운 비밀번호를 암호화하여 저장
         user.changePassword(passwordEncoder.encode(userChangePasswordRequest.getNewPassword()));
+    }
+
+    // 현재 인증된 사용자 ID 가져오기
+    @Transactional(readOnly = true)
+    public Long getAuthenticatedUserId() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                .map(User::getId)
+                .orElseThrow(() -> new InvalidRequestException("인증된 사용자를 찾을 수 없습니다."));
+    }
+
+    // 사용자 역할 가져오기
+    @Transactional(readOnly = true)
+    public UserRole getUserRoleById(Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getUserRole)
+                .orElseThrow(() -> new InvalidRequestException("User not found"));
     }
 }
