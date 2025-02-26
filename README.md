@@ -1,4 +1,4 @@
-<img width="1334" alt="스크린샷 2025-02-26 오전 11 46 04" src="https://github.com/user-attachments/assets/dce0691e-972b-46d9-a20f-59c55d1ac71e" /># 트러블 슈팅 기록
+# 트러블 슈팅 기록
 
 ## 1. 문제 인식 및 정의
 Spring Boot 애플리케이션 실행 중 JWT 비밀키 미설정 문제로 인해 마크다운 `JwtUtil` 클래스에서 환경 변수를 찾지 못해 예외 발생
