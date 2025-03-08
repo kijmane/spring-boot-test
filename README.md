@@ -1,4 +1,4 @@
-# 트러블 슈팅 기록
+# Troubleshooting
 
 ## 1. 문제 인식 및 정의
 Spring Boot 애플리케이션 실행 중 JWT 비밀키 미설정 문제로 인해 마크다운 `JwtUtil` 클래스에서 환경 변수를 찾지 못해 예외 발생
